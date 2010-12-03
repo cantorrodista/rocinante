@@ -1,0 +1,390 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="Turismo Castilla-La Mancha" />
+<meta name="description" content="Documentación técnica del API de acceso a datos de Turismo Castilla-La Mancha" />
+<title>Documentación API Turismo Castilla-La Mancha</title>
+<link rel="stylesheet" type="text/css" href="estilo.css" />
+</head>
+<body>
+  <h1>Documentación API de datos de Turismo Castilla-La Mancha</h1>
+  <h2>Índice de contenidos</h2>
+  <ol>
+    <li><a href="#intro">Introducción</a></li>
+    <li><a href="#validacion">Validación</a></li>
+    <li>
+        <a href="#recursos">Recursos turísticos</a>
+        <ol>
+            <li><a href="#recursosParams">Parámetros</a></li>
+            <li><a href="#recursosFormat">Formato de respuesta</a></li>
+            <li><a href="#recursosTipos">Tipos de recurso turístico</a></li>
+            <li><a href="#recursosEj">Ejemplos de uso</a></li>
+        </ol>
+    </li>
+    <li>
+        <a href="#media">Imágenes y videos</a>
+        <ol>
+            <li><a href="#mediaParams">Parámetros</a></li>
+            <li><a href="#mediaFormat">Formato de respuesta</a></li>
+            <li><a href="#mediaEj">Ejemplos de uso</a></li>
+        </ol>    
+    </li>    
+  </ol>
+  <h2 id="intro">Introducción</h2>
+  <p>El API de datos de Turismo de Castilla-La Mancha te permite acceder de forma automatizada a los contenidos relativos al turismo de Castilla-La Mancha, tales como hoteles, restaurantes, monumentos, fotografías, videos, etc.</p>
+  <p>La forma de acceder a los datos es mediante peticiones con paso de parámetros por GET, obteniendo el resultado en formato XML. Los servicios disponen de diferentes formas de búsqueda: se puede buscar por texto, por localización, por tipo, etc.</p>
+  <p>Actualmente existen 2 servicios disponibles:
+        <ul>
+            <li><a href="#recursos">Recursos turísticos</a>: Búsqueda de recursos turísticos por texto, lugar y tipo.</li>
+            <li><a href="#media">Imágenes y vídeos</a>: Búsqueda de imágenes y vídeos por texto, lugar, tipo y pertenencia a recurso turístico.</li>
+        </ul>
+  </p>
+  <h2 id="validacion">Validación</h2>
+  <p>Para acceder al API de <a href="http://www.turismocastillalamancha.com">turismocastillalamancha.com</a> necesitas un identificador público y una clave privada. <a href="http://www.turismocastillalamancha.com/contacto/">Contacta con nosotros</a> para obtener tus claves de acceso al API de datos.</p>
+  <p>Las consultas al API deben realizarse en todo momento con dos parámetros:
+        <ul>
+            <li>Parámetro <em>pub</em>: Identificador público de usuario</li>
+            <li>Parámetro <em>key</em>: Hash md5 resultado de concatenar <em>pub</em> con la clave privada</li>
+        </ul>
+  </p>
+  <p><strong>Nunca debes compartir la clave privada.</strong> Únicamente debes usarla para generar el parámetro <em>key</em>.</p>
+  
+  <h2 id="recursos">Recursos turísticos</h2>
+  <p>Este servicio permite obtener información acerca de los recursos turísticos de Castilla-La Mancha.</p>
+  <p>La URL asociada a la búsqueda de recursos turísticos es la siguiente:<em class="url">http://api.turismocastillalamancha.com/search?[parámetros]</em></p>
+  <h3 id="recursosParams">Parámetros</h3>
+  <p>Los parámetros de búsqueda son los siguientes:</p>
+  <table>
+    <thead>
+        <tr>
+            <th class="colParam">Parámetro</th>
+            <th class="colObl">Obligatorio</th>
+            <th class="colDesc">Descripción</th>
+            <th class="colEj">Ejemplos</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="f0">
+            <td><em>pub</em></td>
+            <td>Sí</td>
+            <td>Identificador público de usuario</td>
+            <td>xxxxxx</td>
+        </tr>
+        <tr class="f1">
+            <td><em>key</em></td>
+            <td>Sí</td>
+            <td>Hash md5 resultado de concatenar <em>pub</em> con la clave privada</td>
+            <td>789b8e40252f46fba1fcdd0535c09326</td>
+        </tr>
+        <tr class="f0">
+            <td><em>q</em></td>
+            <td>No</td>
+            <td>Cadena de búsqueda por nombre</td>
+            <td>catedral de toledo</td>
+        </tr>
+        <tr class="f1">
+            <td><em>ql</em></td>
+            <td>No</td>
+            <td>Cadena de búsqueda por nombre de localidad</td>
+            <td>guadalajara</td>
+        </tr>
+        <tr class="f0">
+            <td><em>qt</em></td>
+            <td>No</td>
+            <td>Cadena de búsqueda por nombre de tipo de recurso turístico</td>
+            <td>casas rurales (<a href="#recursosTipos">lista de tipos</a>)</td>
+        </tr>
+        <tr class="f1">
+            <td><em>lat, lng</em></td>
+            <td>No</td>
+            <td>Búsqueda por cercanía geográfica a latitud y longitud</td>
+            <td>lat=39.856203 lng=-4.027405</td>
+        </tr>
+        <tr class="f0">
+            <td><em>lat, lng, rad</em></td>
+            <td>No</td>
+            <td>Búsqueda por cercanía geográfica a latitud y longitud en un radio determinado (km)</td>
+            <td>lat=39.856203 lng=-4.027405 rad=10</td>
+        </tr> 
+        <tr class="f1">
+            <td><em>n</em></td>
+            <td>No</td>
+            <td>Numero máximo de elementos a devolver (a utilizar en paginaciones). El máximo es 100.</td>
+            <td>n=50</td>
+        </tr>
+        <tr class="f0">
+            <td><em>pag</em></td>
+            <td>No</td>
+            <td>Página de resultados a devolver (empezando en 0)</td>
+            <td>pag=3</td>
+        </tr>
+        <tr class="f1">
+            <td><em>o</em></td>
+            <td>No</td>
+            <td>Orden del listado. Los posibles valores son <em>name</em> (por nombre) o <em>loc</em> (por localidad). Por defecto se aplica un orden aleatorio que cambia cada hora.</td>
+            <td>o=name, o=loc</td>
+        </tr>
+        <tr class="f0">
+            <td><em>gid</em></td>
+            <td>No</td>
+            <td>Búsqueda por id de recurso</td>
+            <td>1000880</td>
+        </tr>
+        <tr class="f1">
+            <td><em>output</em></td>
+            <td>No</td>
+            <td>Formato de salida: XML o JSON (por defecto xml)</td>
+            <td>output=xml, output=json</td>
+        </tr>
+    </tbody>
+  </table>
+  <h3 id="recursosFormat">Formato de respuesta</h3>
+  <p>Los resultados de búsqueda se generan en formato XML. Para cada recurso obtenido, se devuelve su identificador (<em>gid</em>), tipo de recurso turístico (<em>type</em>) y un valor para determinar si los datos del recurso han cambiado (<em>hash</em>).</p>
+  <p>A continuación se muestra un ejemplo de respuesta:</p>
+  <div class="code">
+    <span class="n0">&lt;resources totalItems="323"&gt;</span>
+    <span class="n1">&lt;res&gt;</span>
+    <span class='n2'>&lt;gid&gt;20000233&lt;/gid&gt;</span>
+    <span class='n2'>&lt;type&gt;Monumentos&lt;/type&gt;</span>
+    <span class='n2'>&lt;hash&gt;1bc30b77327469b86c5b4f62ed43cf4d&lt;/hash&gt;</span>
+    <span class='n2'>&lt;data&gt;</span>
+    <span class='n3'>&lt;name&gt;Catedral de Toledo&lt;/name&gt;</span>
+    <span class='n3'>&lt;email&gt;catedral@architoledo.org&lt;/email&gt;</span>
+    <span class='n3'>&lt;web&gt;www.architoledo.org/catedral/Default.htm&lt;/web&gt;</span>
+    <span class='n3'>&lt;phone&gt;925222241&lt;/phone&gt;</span>
+    <span class='n3'>&lt;fax&gt;925253400&lt;/fax&gt;</span>
+    <span class='n3'>&lt;body&gt;<br />&Uacute;nica en Espa&ntilde;a y s&oacute;lo por detr&aacute;s en tama&ntilde;o de la de Sevilla, la Catedral de Toledo es una espectacular pieza de la arquitectura y el arte espa&ntilde;ol. En ella encontramos la huella de todos los estilos art&iacute;sticos predominantes en la Historia de Espa&ntilde;a. Estructura g&oacute;tica en su construcci&oacute;n, yeser&iacute;as y techos de traza &aacute;rabe en la sala capitular, influencias del barroco en su Transparente, del neocl&aacute;sico en la Puerta Llana... Recorrerla y caminar pausadamente por sus naves, capillas, salas..., es viajar en el tiempo y descubrir un pasado a&uacute;n hoy vivo, de ensalzamiento y glorificaci&oacute;n a lo Eterno. Contenido cedido por www.turismocastillalamancha.com<br />&lt;/body&gt;</span>
+    <span class='n3'>&lt;url&gt;http://www.turismocastillalamancha.com/go/20/233/4a5315923b8b49713a48404cd3e7b084/&lt;/url&gt;</span>
+    <span class='n2'>&lt;/data&gt;</span>
+    <span class='n2'>&lt;geo&gt;</span>
+    <span class='n3'>&lt;address&gt;Plaza  del Ayuntamiento&lt;/address&gt;</span>
+    <span class='n3'>&lt;zipcode&gt;45002&lt;/zipcode&gt;</span>
+    <span class='n3'>&lt;locality&gt;Toledo&lt;/locality&gt;</span>
+    <span class='n3'>&lt;localitygid&gt;1000880&lt;/localitygid&gt;</span>
+    <span class='n3'>&lt;province&gt;Toledo&lt;/province&gt;</span>
+    <span class='n3'>&lt;provincegid&gt;3000005&lt;/provincegid&gt;</span>
+    <span class='n3'>&lt;latitude&gt;39.8573&lt;/latitude&gt;</span>
+    <span class='n3'>&lt;longitude&gt;-4.02449&lt;/longitude&gt;</span>
+    <span class='n2'>&lt;/geo&gt;</span>
+    <span class='n2'>&lt;media&gt;</span>
+    <span class='n3'>&lt;thumb&gt;<br />http://archivos.turismocastillalamancha.com/patrimonio/museos/wm/90/1/custodia-de-enrique-de-arfe-museo-catedral-toledo.jpg<br />&lt;/thumb&gt;</span>
+    <span class='n3'>&lt;images&gt;</span>
+    <span class='n4'>&lt;item&gt;<br />http://archivos.turismocastillalamancha.com/patrimonio/wm/2369/39/toledo.jpg<br />&lt;/item&gt;</span>
+    <span class='n4'>&lt;item&gt;<br />http://archivos.turismocastillalamancha.com/patrimonio/wm/2371/39/toledo.jpg<br />&lt;/item&gt;</span>
+    <span class='n3'>&lt;/images&gt;</span>
+    <span class='n3'>&lt;videos&gt;</span>
+    <span class='n4'>&lt;item&gt;<br />http://www.turismocastillalamancha.com/go/23/8988/b1ab2531f136f98e753c4dce6df8b3ef/<br />&lt;/item&gt;</span>
+    <span class='n3'>&lt;/videos&gt;</span>
+    <span class='n2'>&lt;/media&gt;</span>
+    <span class='n1'>&lt;/res&gt;</span>
+    <span class='n1'>...</span>
+    <span class="n0">&lt;/resources&gt;</span>
+  </div>
+  <h3 id="recursosTipos">Tipos de recurso turístico</h3>
+  <p>Existen gran cantidad de recursos turísticos sobre los que realizar búsquedas. Los disponibles a través de esta API son:</p>
+  <table class='types'>
+    <thead>
+        <tr>
+            <th>Tipo</th>
+            <th>Valor parámetro qt</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="f0"><td>Alojamientos rurales</td><td>alojamientos+rurales</td></tr>
+        <tr class="f1"><td>Apartamentos turísticos</td><td>apartamentos</td></tr>
+        <tr class="f0"><td>Balnearios</td><td>balnearios</td></tr>
+        <tr class="f1"><td>Bodegas</td><td>bodegas</td></tr>
+        <tr class="f0"><td>Campings</td><td>campings</td></tr>
+        <tr class="f1"><td>Campos de golf</td><td>campos+golf</td></tr>
+        <tr class="f0"><td>Empresas de turismo activo</td><td>empresas+turismo+activo</td></tr>
+        <tr class="f1"><td>Eventos</td><td>eventos</td></tr>
+        <tr class="f0"><td>Hostales</td><td>hostales</td></tr>
+        <tr class="f1"><td>Hoteles</td><td>hoteles</td></tr>
+        <tr class="f0"><td>Hoteles SPA</td><td>hoteles+spa</td></tr>
+        <tr class="f1"><td>Localidades</td><td>localidades</td></tr>
+        <tr class="f0"><td>Microrreservas</td><td>microrreservas</td></tr>
+        <tr class="f1"><td>Monumentos</td><td>monumentos</td></tr>
+        <tr class="f0"><td>Monumentos Naturales</td><td>monumentos+naturales</td></tr>
+        <tr class="f1"><td>Museos</td><td>museos</td></tr>
+        <tr class="f0"><td>Noticias</td><td>noticias</td></tr>
+        <tr class="f1"><td>Oficinas de turismo</td><td>oficinas+turismo</td></tr>
+        <tr class="f0"><td>Paradores</td><td>paradores</td></tr>
+        <tr class="f1"><td>Parques arqueológicos</td><td>parques+arqueologicos</td></tr>
+        <tr class="f0"><td>Parques Nacionales</td><td>parques+nacionales</td></tr>
+        <tr class="f1"><td>Parques Naturales</td><td>parques+naturales</td></tr>
+        <tr class="f0"><td>Reservas Naturales</td><td>reservas+naturales</td></tr>
+        <tr class="f1"><td>Restaurantes</td><td>restaurantes</td></tr>
+    </tbody>
+  </table>
+  <h3 id="recursosEj">Ejemplos de uso</h3>
+  <p>A continuación se muestran algunos ejemplos de búsquedas de recursos turísticos de Turismo Castilla-La Mancha.</p>
+  <div class="ejemplo">
+    <p>Búsqueda de recursos que coinciden con &quot;casa paco&quot;:</p>
+    <em class="url">http://api.turismocastillalamancha.com/search?pub=[pub]&key=[key]&q=casa+paco</em>
+  </div>
+  <div class="ejemplo">
+    <p>Búsqueda de casas rurales en Yeste:</p>
+    <em class="url">http://api.turismocastillalamancha.com/search?pub=[pub]&key=[key]&qt=casas+rurales&ql=yeste</em>
+  </div>
+  <div class="ejemplo">
+    <p>Búsqueda de hoteles a 20km de Toledo (ordenados alfabéticamente):</p>
+    <em class="url">http://api.turismocastillalamancha.com/search?pub=[pub]&key=[key]&lat=39.857089&lng=-4.024951&rad=20&qt=hoteles&o=name</em>
+  </div>
+  <div class="ejemplo">
+    <p>Búsqueda de hoteles a 20km de Toledo (ordenados alfabéticamente, tercera página con 5 items por página):</p>
+    <em class="url">http://api.turismocastillalamancha.com/search?pub=[pub]&key=[key]&lat=39.857089&lng=-4.024951&rad=20&qt=hoteles&o=name&pag=2&n=5</em>
+  </div>
+  
+  <h2 id="media">Imágenes y vídeos</h2>
+  <p>Este servicio permite obtener las imágenes y videos referentes a los recursos turísticos de Castilla-La Mancha.</p>
+  <p>La URL asociada a la búsqueda de imágenes y vídeos es la siguiente:<em class="url">http://api.turismocastillalamancha.com/media?[parámetros]</em></p>
+  <h3 id="mediaParams">Parámetros</h3>
+  <p>Los parámetros de búsqueda son los siguientes:</p>
+  <table>
+    <thead>
+        <tr>
+            <th class="colParam">Parámetro</th>
+            <th class="colObl">Obligatorio</th>
+            <th class="colDesc">Descripción</th>
+            <th class="colEj">Ejemplos</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="f0">
+            <td><em>pub</em></td>
+            <td>Sí</td>
+            <td>Identificador público de usuario</td>
+            <td>xxxxxx</td>
+        </tr>
+        <tr class="f1">
+            <td><em>key</em></td>
+            <td>Sí</td>
+            <td>Hash md5 resultado de concatenar <em>pub</em> con la clave privada</td>
+            <td>789b8e40252f46fba1fcdd0535c09326</td>
+        </tr>
+        <tr class="f0">
+            <td><em>q</em></td>
+            <td>No</td>
+            <td>Cadena de búsqueda por nombre / palabras clave</td>
+            <td>catedral de toledo</td>
+        </tr>
+        <tr class="f1">
+            <td><em>ql</em></td>
+            <td>No</td>
+            <td>Cadena de búsqueda por nombre de localidad</td>
+            <td>guadalajara</td>
+        </tr>
+        <tr class="f0">
+            <td><em>t</em></td>
+            <td>No</td>
+            <td>Tipo de archivo a buscar (imágenes o vídeos)</td>
+            <td>t=img, t=vid</td>
+        </tr>
+        <tr class="f1">
+            <td><em>lat, lng</em></td>
+            <td>No</td>
+            <td>Búsqueda por cercanía geográfica a latitud y longitud</td>
+            <td>lat=39.856203 lng=-4.027405</td>
+        </tr>
+        <tr class="f0">
+            <td><em>lat, lng, rad</em></td>
+            <td>No</td>
+            <td>Búsqueda por cercanía geográfica a latitud y longitud en un radio determinado (km)</td>
+            <td>lat=39.856203 lng=-4.027405 rad=10</td>
+        </tr>
+        <tr class="f1">
+            <td><em>rgid</em></td>
+            <td>No</td>
+            <td>Identificador del recurso para extraer sus archivos asociados. Por ejemplo las imágenes y vídeos de la Catedral de Toledo.</td>
+            <td>rgid=21005541</td>
+        </tr>
+        <tr class="f0">
+            <td><em>n</em></td>
+            <td>No</td>
+            <td>Numero máximo de elementos a devolver (a utilizar en paginaciones). El máximo es 100.</td>
+            <td>n=50</td>
+        </tr>
+        <tr class="f1">
+            <td><em>pag</em></td>
+            <td>No</td>
+            <td>Página de resultados a devolver (empezando en 0)</td>
+            <td>pag=3</td>
+        </tr>
+        <tr class="f0">
+            <td><em>o</em></td>
+            <td>No</td>
+            <td>Orden del listado. Los posibles valores son <em>name</em> (por nombre) o <em>loc</em> (por localidad). Por defecto se aplica un orden aleatorio que cambia cada hora.</td>
+            <td>o=name, o=loc</td>
+        </tr>
+        <tr class="f1">
+            <td><em>gid</em></td>
+            <td>No</td>
+            <td>Búsqueda por id de archivo</td>
+            <td>gid=23008236</td>
+        </tr>
+        <tr class="f0">
+            <td><em>output</em></td>
+            <td>No</td>
+            <td>Formato de salida: XML o JSON (por defecto xml)</td>
+            <td>output=xml, output=json</td>
+        </tr>
+    </tbody>
+  </table>
+  <h3 id="mediaFormat">Formato de respuesta</h3>
+  <p>Los resultados de búsqueda se generan en formato XML. Para cada imagen/video obtenido, se devuelve su identificador (<em>gid</em>), tipo de archivo (<em>type</em>) y un valor para determinar si los datos de la imagen/video han cambiado (<em>hash</em>).</p>
+  <p>A continuación se muestra un ejemplo de respuesta:</p>
+  <div class="code">
+    <span class="n0">&lt;media totalItems="323"&gt;</span>
+    <span class="n1">&lt;mediaItem&gt;</span>
+    <span class='n2'>&lt;gid&gt;23008236&lt;/gid&gt;</span>
+    <span class='n2'>&lt;type&gt;image&lt;/type&gt;</span>
+    <span class='n2'>&lt;hash&gt;1bc30b77327469b86c5b4f62ed43cf4d&lt;/hash&gt;</span>
+    <span class='n2'>&lt;data&gt;</span>
+    <span class='n3'>&lt;title&gt;Restaurante Casón de los López (Toledo)&lt;/title&gt;</span>
+    <span class='n3'>&lt;tags&gt;restaurante cason lopez toledo&lt;/tags&gt;</span>
+    <span class='n3'>&lt;description&gt;Foto interior del Restaurante Casón de los López&lt;/description&gt;</span>
+    <span class='n3'>&lt;url&gt;http://www.turismocastillalamancha.com/go/23/8236/e8f9fe6ddd88b59acf31071a3fcf9e6c/&lt;/url&gt;</span>
+    <span class='n3'>&lt;thumb&gt;http://archivos.turismocastillalamancha.com/oferta-complementaria/restaurantes/wm/8236/1/restaurante-cason-de-los-lopez-toledo.jpg&lt;/thumb&gt;</span>
+    <span class='n3'><em>(Sólo en imágenes)</em>&lt;big&gt;http://archivos.turismocastillalamancha.com/oferta-complementaria/restaurantes/wm/8236/39/restaurante-cason-de-los-lopez-toledo.jpg&lt;/big&gt;</span>
+    <span class='n3'><em>(Sólo en vídeos)</em>&lt;youtubeId&gt;tYCynjYEg8M&lt;/youtubeId&gt;</span>
+    <span class='n2'>&lt;/data&gt;</span>
+    <span class='n2'>&lt;geo&gt;</span>                             
+    <span class='n3'>&lt;locality&gt;Toledo&lt;/locality&gt;</span>
+    <span class='n3'>&lt;localitygid&gt;1000880&lt;/localitygid&gt;</span>
+    <span class='n3'>&lt;province&gt;Toledo&lt;/province&gt;</span>
+    <span class='n3'>&lt;provincegid&gt;3000005&lt;/provincegid&gt;</span>
+    <span class='n3'>&lt;latitude&gt;39.8573&lt;/latitude&gt;</span>
+    <span class='n3'>&lt;longitude&gt;-4.02449&lt;/longitude&gt;</span>
+    <span class='n2'>&lt;/geo&gt;</span>
+    <span class='n1'>&lt;/mediaItem&gt;</span>
+    <span class='n1'>...</span>
+    <span class="n0">&lt;/media&gt;</span>
+  </div>
+  <h3 id="mediaEj">Ejemplos de uso</h3>
+  <p>A continuación se muestran algunos ejemplos de búsquedas de imágenes y vídeos de Turismo Castilla-La Mancha.</p>
+  <div class="ejemplo">
+    <p>Búsqueda de fotografías que contienen la palabra cascada:</p>
+    <em class="url">http://api.turismocastillalamancha.com/media?pub=[pub]&key=[key]&t=img&q=cascada</em>
+  </div>
+  <div class="ejemplo">
+    <p>Fotografías de la localidad de Talavera:</p>
+    <em class="url">http://api.turismocastillalamancha.com/media?pub=[pub]&key=[key]&t=img&ql=talavera</em>
+  </div>
+  <div class="ejemplo">
+    <p>Todo el multimedia a 10km de Toledo:</p>
+    <em class="url">http://api.turismocastillalamancha.com/media?pub=[pub]&key=[key]&lat=39.857089&lng=-4.024951&rad=10</em>
+  </div>
+  <div class="ejemplo">
+    <p>Tercera página de resultados para &quot;castillo&quot; (10 resultados por página):</p>
+    <em class="url">http://api.turismocastillalamancha.com/media?pub=[pub]&key=[key]&q=castillo&pag=2&n=10</em>
+  </div>
+  <div class="ejemplo">
+    <p>Todas las imágenes de la Catedral de Toledo:</p>
+    <em class="url">http://api.turismocastillalamancha.com/media?pub=[pub]&key=[key]&gid=20000233&t=img</em>
+  </div>
+  <div class="footer">
+    &copy; 2010 | <a href="http://www.turismocastillalamancha.com">Turismo de Castilla-La Mancha</a>
+  </div>
+</body>
+</html>
